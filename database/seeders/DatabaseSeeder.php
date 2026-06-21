@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        //jika user 'admin@example.com' belum ada, maka buat user baru
+        // jika user 'admin@example.com' belum ada, maka buat user baru
         if (User::where('email', 'admin@example.com')->first() === null) {
             User::factory()->create([
                 'name' => 'Admin User',
