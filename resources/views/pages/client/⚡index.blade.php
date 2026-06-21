@@ -12,6 +12,7 @@ new #[Title('Clients')] class extends Component
     public string $name = '';
     public string $code = '';
     public ?string $domain = null;
+    public ?string $token = null;
 
     public function mount(): void
     {
@@ -42,6 +43,7 @@ new #[Title('Clients')] class extends Component
         $this->name = $client->name;
         $this->code = $client->code;
         $this->domain = $client->domain;
+        $this->token = $client->token;
         Flux::modal('client-form')->show();
     }
 
@@ -51,6 +53,7 @@ new #[Title('Clients')] class extends Component
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255|unique:clients,code,' . $this->editingClientId,
             'domain' => 'nullable|string|max:255',
+            'token' => 'nullable|string|max:255',
         ]);
 
         if ($this->editingClientId) {
@@ -58,7 +61,8 @@ new #[Title('Clients')] class extends Component
             $client->update($data);
             Flux::toast(variant: 'success', text: __('Client updated.'));
         } else {
-            Client::create($data + ['token' => \Illuminate\Support\Str::random(64)]);
+            $data['token'] = $data['token'] ?: \Illuminate\Support\Str::random(64);
+            Client::create($data);
             Flux::toast(variant: 'success', text: __('Client created.'));
         }
 
@@ -67,9 +71,14 @@ new #[Title('Clients')] class extends Component
         Flux::modal('client-form')->close();
     }
 
+    public function regenerateToken(): void
+    {
+        $this->token = \Illuminate\Support\Str::random(64);
+    }
+
     private function resetForm(): void
     {
-        $this->reset(['name', 'code', 'domain', 'editingClientId']);
+        $this->reset(['name', 'code', 'domain', 'token', 'editingClientId']);
         $this->resetValidation();
     }
 };
@@ -140,6 +149,17 @@ new #[Title('Clients')] class extends Component
             <flux:input wire:model="name" :label="__('Name')" required autofocus />
             <flux:input wire:model="code" :label="__('Code')" required />
             <flux:input wire:model="domain" :label="__('Domain')" />
+
+            <div>
+                <div class="flex items-end gap-2">
+                    <div class="flex-1">
+                        <flux:input wire:model="token" :label="__('Token')" placeholder="{{ __('Leave empty to auto-generate') }}" />
+                    </div>
+                    <flux:button variant="ghost" size="sm" wire:click="regenerateToken" class="mb-0.5">
+                        {{ __('Regenerate') }}
+                    </flux:button>
+                </div>
+            </div>
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
