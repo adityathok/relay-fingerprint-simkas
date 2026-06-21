@@ -6,6 +6,8 @@ use App\Repositories\ClientRepository;
 use App\Repositories\ClientRepositoryInterface;
 use App\Repositories\DeviceRepository;
 use App\Repositories\DeviceRepositoryInterface;
+use App\Repositories\FingerprintRawLogRepository;
+use App\Repositories\FingerprintRawLogRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +29,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             DeviceRepositoryInterface::class,
             DeviceRepository::class,
+        );
+
+        $this->app->bind(
+            FingerprintRawLogRepositoryInterface::class,
+            FingerprintRawLogRepository::class,
         );
     }
 
