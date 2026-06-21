@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ClientSeeder::class,
             DeviceSeeder::class,
+            FingerprintRawLogSeeder::class,
         ]);
     }
 }
