@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\ClientRepository;
 use App\Repositories\ClientRepositoryInterface;
+use App\Repositories\DeviceRepository;
+use App\Repositories\DeviceRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ClientRepositoryInterface::class,
             ClientRepository::class,
+        );
+
+        $this->app->bind(
+            DeviceRepositoryInterface::class,
+            DeviceRepository::class,
         );
     }
 
@@ -42,14 +49,15 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
+        Password::defaults(
+            fn(): ?Password => app()->isProduction()
+                ? Password::min(12)
                 ->mixedCase()
                 ->letters()
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-            : null,
+                : null,
         );
     }
 }
