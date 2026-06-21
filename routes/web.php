@@ -9,4 +9,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('admin/clients', 'pages::client.index')->name('admin.clients');
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';
