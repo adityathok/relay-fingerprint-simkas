@@ -25,6 +25,10 @@
                 <flux:sidebar.item icon="device-tablet" :href="route('admin.devices')" :current="request()->routeIs('admin.devices')" wire:navigate>
                     {{ __('Devices') }}
                 </flux:sidebar.item>
+
+                <flux:sidebar.item icon="document-text" :href="route('admin.fingerprintRawLogs')" :current="request()->routeIs('admin.fingerprintRawLogs')" wire:navigate>
+                    {{ __('Fingerprint Raw Logs') }}
+                </flux:sidebar.item>
             </flux:sidebar.group>
         </flux:sidebar.nav>
 
