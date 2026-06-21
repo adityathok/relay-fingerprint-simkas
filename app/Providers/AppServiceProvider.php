@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\ClientRepository;
+use App\Repositories\ClientRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +17,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            ClientRepositoryInterface::class,
+            ClientRepository::class,
+        );
     }
 
     /**
