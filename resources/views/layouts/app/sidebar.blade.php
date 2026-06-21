@@ -21,6 +21,10 @@
                 <flux:sidebar.item icon="building-storefront" :href="route('admin.clients')" :current="request()->routeIs('admin.clients')" wire:navigate>
                     {{ __('Clients') }}
                 </flux:sidebar.item>
+
+                <flux:sidebar.item icon="device-tablet" :href="route('admin.devices')" :current="request()->routeIs('admin.devices')" wire:navigate>
+                    {{ __('Devices') }}
+                </flux:sidebar.item>
             </flux:sidebar.group>
         </flux:sidebar.nav>
 
