@@ -27,15 +27,7 @@ class FingerPrintService
      */
     public function cdata(string $deviceSn, ?string $table = null, ?string $body = null): string
     {
-        $device = $this->deviceRepository->findBySerialNumber($deviceSn);
-
-        // Register unknown device or update last seen
-        if (! $device) {
-            // TODO: optionally auto-register unknown devices
-            return 'OK';
-        }
-
-        // POST: store the raw data
+        // POST: store all incoming data regardless of device recognition
         if ($body !== null && $table !== null) {
             $this->logRepository->create([
                 'device_sn' => $deviceSn,
