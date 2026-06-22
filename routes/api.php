@@ -9,7 +9,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('iclock')->group(function () {
-    Route::post('/rtdata', [FingerPrintController::class, 'rtdata']);
-    Route::post('/getrequest', [FingerPrintController::class, 'getrequest']);
-    Route::post('/cdata', [FingerPrintController::class, 'devicecmd']);
+    Route::match(['GET', 'POST'], '/cdata', [FingerPrintController::class, 'cdata']);
+    Route::get('/getrequest', [FingerPrintController::class, 'getrequest']);
+    Route::get('/devicecmd', [FingerPrintController::class, 'devicecmd']);
 });

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\FingerPrintService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class FingerPrintController extends Controller
 {
@@ -15,74 +15,63 @@ class FingerPrintController extends Controller
     }
 
     /**
-     * Handle real-time attendance data push from fingerprint machines.
+     * Handle CData — main communication endpoint for iClock devices.
+     *
+     * GET:  Device registration / handshake.
+     * POST: Receive attendance logs (tab-separated body) and other table data.
      */
-    public function rtdata(Request $request): JsonResponse
+    public function cdata(Request $request): Response
     {
-        $deviceSn = $request->input('SN', $request->input('SerialNumber', ''));
-        $payload = $request->except(['SN', 'SerialNumber']);
+        $deviceSn = $request->query('SN', '');
+        $table = $request->query('table');
 
         if (empty($deviceSn)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Missing device serial number.',
-            ], 400);
+            return response('OK');
         }
 
-        $result = $this->fingerPrintService->rtdata($deviceSn, $payload);
-
-        if (! $result['success']) {
-            return response()->json($result, 404);
+        $body = null;
+        if ($request->isMethod('POST')) {
+            $body = $request->getContent();
         }
 
-        return response()->json($result);
+        $result = $this->fingerPrintService->cdata($deviceSn, $table, $body);
+
+        return response($result);
     }
 
     /**
-     * Handle device polling for pending commands.
+     * Handle GetRequest — device polls for pending commands.
+     *
+     * Returns "OK" if no commands, or "C:<id>:<COMMAND>" lines.
      */
-    public function getrequest(Request $request): JsonResponse
+    public function getrequest(Request $request): Response
     {
-        $deviceSn = $request->input('SN', $request->input('SerialNumber', ''));
+        $deviceSn = $request->query('SN', '');
 
         if (empty($deviceSn)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Missing device serial number.',
-            ], 400);
+            return response('OK');
         }
 
         $result = $this->fingerPrintService->getrequest($deviceSn);
 
-        if (! $result['success']) {
-            return response()->json($result, 404);
-        }
-
-        return response()->json($result);
+        return response($result);
     }
 
     /**
-     * Queue a command for a fingerprint machine.
+     * Handle DeviceCMD — alternative command polling endpoint.
+     *
+     * Returns "ID:<n>\nCOMMAND:<CMD>" format.
      */
-    public function devicecmd(Request $request): JsonResponse
+    public function devicecmd(Request $request): Response
     {
-        $deviceSn = $request->input('SN', $request->input('SerialNumber', ''));
-        $command = $request->input('command', '');
-        $parameters = $request->except(['SN', 'SerialNumber', 'command']);
+        $deviceSn = $request->query('SN', '');
 
-        if (empty($deviceSn) || empty($command)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Missing device serial number or command.',
-            ], 400);
+        if (empty($deviceSn)) {
+            return response('OK');
         }
 
-        $result = $this->fingerPrintService->devicecmd($deviceSn, $command, $parameters);
+        $result = $this->fingerPrintService->devicecmd($deviceSn);
 
-        if (! $result['success']) {
-            return response()->json($result, 404);
-        }
-
-        return response()->json($result);
+        return response($result);
     }
 }
